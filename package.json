@@ -1,5 +1,5 @@
 {
-  "name": "serviceproyect",
+  "name": "pruebaserviceproject",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,13 +7,27 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon ./src/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jehernandezv/pruebaServiceProject.git"
+  },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jehernandezv/pruebaServiceProject/issues"
+  },
+  "homepage": "https://github.com/jehernandezv/pruebaServiceProject#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "mongoose": "^5.9.25",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.4"
+    "multer": "^1.4.2",
+    "nodemon": "^2.0.4",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.0"
   }
 }
