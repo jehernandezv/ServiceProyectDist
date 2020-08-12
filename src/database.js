@@ -13,4 +13,4 @@ client.connect(err => {
   const collection = client.db("test").collection("patients");
   // perform actions on the collection object
   client.close();
-});
+}).then(() => console.log('db is conected')).catch(err => console.log(err));
