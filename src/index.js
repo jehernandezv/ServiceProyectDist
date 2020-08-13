@@ -82,7 +82,7 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             doc.text(20, pos + 20, 'CASOS TOTALES: ' + result.length + '!');
             await doc.save(path.join(__dirname, './public/uploads/Test.pdf'), {returnPromise:true}, function (err) { console.log('saved!'); });
         });
-        await snooze(150);
+        await snooze(400);
         res.sendFile(path.join(__dirname, './public/uploads/Test.pdf'));
     });
 
