@@ -1,20 +1,27 @@
+const db = require('./database');
+const dbName = "projectFinal";
+const collectionName = "patients";
+
+require('dotenv').config();
 var express = require('express');
 var cors = require('cors');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 const multer = require('multer');
-const Patient = require('./models/Patient');
+const path = require('path');
+const cloudinary = require('cloudinary');
+const fs = require('fs');
 const uuid = require('uuid').v4;
+
 var port = process.argv[2];
 var numServer = process.argv[3];
-
-const db = require('./database');
-const dbName = "projectFinal";
-const collectionName = "patients";
-
 var app = express();
-const storage = null;
-
+const storage = multer.diskStorage({
+    destination:path.join(__dirname,'public/uploads'),
+    filename:(req,file,cb) => {
+        cb(null,uuid()+path.extname(file.originalname))
+    }
+});
 
 app.use(cors());
 app.use(morgan('dev'));
@@ -22,6 +29,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(multer({storage}).single('image'));
 app.use(bodyParser.json());
+cloudinary.config({
+    cloud_name: 'drh8926tv',
+    api_key: '296114521285185',
+    api_secret: 'qBb8TnYd7X9f7LdnyEbXjs5SqMs'
+});
 
 app.get('/',function(req,res){
     res.json({
@@ -45,20 +57,24 @@ app.get('/:city',function(req,res){
 });
 
 //registra casos
-app.post('/addCovid', (req,res) => {
+app.post('/addCovid',async (req,res) => {
     try{
-
         console.log(req.body.name);
         console.log(req.file.originalname);
         console.log(req.body.city);
+       const upload = await cloudinary.v2.uploader.upload(req.file.path);
+       console.log(upload);
 
+        /*
         const patient = new Patient({
             name:req.body.name,
             city:req.body.city,
             UrlImage:uuid()
-        });
+        });*/
 
-        patient.save();
+       //await patient.save();
+       //eliminando imagen del server
+        fs.unlinkSync(req.file.path);
         console.log('Se ha guardado un paciente')
 
         res.json({
@@ -69,6 +85,7 @@ app.post('/addCovid', (req,res) => {
         res.json(e.message);
     }
 });
+
 
 db.initialize(dbName, collectionName, function(dbCollection) { // successCallback
     dbCollection.find().toArray(function(err, result) {
