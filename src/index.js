@@ -3,13 +3,14 @@ var cors = require('cors');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 const multer = require('multer');
-require('./database');
 const Patient = require('./models/Patient');
 const uuid = require('uuid').v4;
 var port = process.argv[2];
 var numServer = process.argv[3];
 
-
+const db = require('./database');
+const dbName = "projectFinal";
+const collectionName = "patients";
 
 var app = express();
 const storage = null;
@@ -69,7 +70,14 @@ app.post('/addCovid', (req,res) => {
     }
 });
 
-
+db.initialize(dbName, collectionName, function(dbCollection) { // successCallback
+    dbCollection.find().toArray(function(err, result) {
+        if (err) throw err;
+          console.log(result);
+    });
+}, function(err) { 
+    throw (err);
+});
 
 app.listen(port, function () {
     console.log('Example app server ubuntu1 listening on port ' + port + '!');
