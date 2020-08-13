@@ -60,6 +60,10 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             message: 'get de cuidad del server: ' + numServer
         });
     });
+
+    
+
+
     //registra casos
     app.post('/addCovid', async (req, res) => {
         try {
@@ -67,16 +71,15 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             console.log(req.file.originalname);
             console.log(req.body.city);
             const upload = await cloudinary.v2.uploader.upload(req.file.path);
-            console.log(upload);
             fs.unlinkSync(req.file.path);
             console.log('Se ha guardado un paciente')
-            const item = req.body;
+            const item = {
+                name: req.body.name,
+                city: req.body.city,
+                originalname: upload.url
+            };
             dbCollection.insertOne(item, (error, result) => {
                 if (error) throw error;
-                dbCollection.find().toArray((_error, _result) => {
-                    if (_error) throw _error;
-                    res.json(_result);
-                });
             });
 
             res.json({
