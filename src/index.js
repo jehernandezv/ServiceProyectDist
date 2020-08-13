@@ -46,6 +46,8 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             message: 'el server: ' + numServer + ' respondio'
         })
     });
+    //traer todos los casos mostrar grafica
+
 
     //traer todos los casos mostrar grafica
     app.get('/all', function (req, res) {
@@ -54,15 +56,12 @@ db.initialize(dbName, collectionName, function (dbCollection) {
         })
     });
     //reporte por cuidad en PDF
-    app.get('/:city', function (req, res) {
-        console.log(req.params.city);
-        res.json({
-            message: 'get de cuidad del server: ' + numServer
+    app.get('/generatePDF/:city', function (req, res) {
+        dbCollection.find().toArray((error, result) => {
+            if (error) throw error;
+            response.json(result);
         });
     });
-
-    
-
 
     //registra casos
     app.post('/addCovid', async (req, res) => {
