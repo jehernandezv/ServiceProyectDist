@@ -70,7 +70,7 @@ db.initialize(dbName, collectionName, function (dbCollection) {
         doc.text(20, 20, '¡Estos son los pacientes de ' + city + '!', { align: "left" });
         doc.setFontSize(15);
         
-        dbCollection.find({ city: city }, { name: 1, originalname: 2 }).toArray((error, result) => {
+        dbCollection.find({ city: city }, { name: 1, originalname: 2 }).toArray(async (error, result) => {
             if (error) throw error;
             var pos = 40;
             for (let index = 0; index < result.length; index++) {
@@ -80,7 +80,7 @@ db.initialize(dbName, collectionName, function (dbCollection) {
                 pos += 10;
             }
             doc.text(20, pos + 20, 'CASOS TOTALES: ' + result.length + '!');
-            doc.save(path.join(__dirname, './public/uploads/Test.pdf'), function (err) { console.log('saved!'); });
+            await doc.save(path.join(__dirname, './public/uploads/Test.pdf'), {returnPromise:true}, function (err) { console.log('saved!'); });
         });
         
         await snooze(150);
