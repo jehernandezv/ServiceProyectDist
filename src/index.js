@@ -18,7 +18,6 @@ var app = express();
 const db = require('./database');
 const dbName = "projectFinal";
 const collectionName = "patients";
-const doc = new jsPDF();
 
 
 const storage = multer.diskStorage({
@@ -33,6 +32,7 @@ db.initialize(dbName, collectionName, function (dbCollection) {
         if (err) throw err;
         console.log(result);
     });
+    app.use(express.static('./public/uploads/'));
     app.use(cors());
     app.use(morgan('dev'));
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -62,6 +62,7 @@ db.initialize(dbName, collectionName, function (dbCollection) {
 
     //reporte por cuidad en PDF
     app.get('/generatePDF/:city', function (req, res) {
+        const doc = new jsPDF();
         const city = req.params.city;
         doc.setFontSize(30)
         doc.text(20, 20, '¡Estos son los pacientes de ' + city + '!', { align: "left" });
@@ -72,13 +73,13 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             for (let index = 0; index < result.length; index++) {
                 const element = result[index];
 
-                doc.text(20, pos, element.name, { align: "left" });
-                pos += 8;
+                doc.text(20, pos,index + 1 + '   -   ' + element.name, { align: "left" });
+                pos += 10;
             }
-            doc.text(20, pos, 'Casos totales: ' + result.length + '!');
-            doc.save(path.join(__dirname, 'Test.pdf'), function (err) { console.log('saved!'); });
+            doc.text(20, pos + 20, 'CASOS TOTALES: ' + result.length + '!');
+            doc.save(path.join(__dirname, './public/uploads/Test.pdf'), function (err) { console.log('saved!'); });
         });
-    //    res.sendFile(path.join(__dirname, 'Test.pdf'));
+        res.sendFile(path.join(__dirname, './public/uploads/Test.pdf'));
         
     });
 
