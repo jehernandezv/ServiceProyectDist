@@ -62,24 +62,26 @@ app.post('/addCovid',async (req,res) => {
         console.log(req.body.name);
         console.log(req.file.originalname);
         console.log(req.body.city);
-       const upload = await cloudinary.v2.uploader.upload(req.file.path);
-       console.log(upload);
-
-        /*
-        const patient = new Patient({
-            name:req.body.name,
-            city:req.body.city,
-            UrlImage:uuid()
-        });*/
-
-       //await patient.save();
-       //eliminando imagen del server
+        const upload = await cloudinary.v2.uploader.upload(req.file.path);
+        console.log(upload);
         fs.unlinkSync(req.file.path);
         console.log('Se ha guardado un paciente')
+
+        const item = req.body;
+
+        dbCollection.insertOne(item, (error, result) => { 
+            if (error) throw error;
+            dbCollection.find().toArray((_error, _result) => {
+                if (_error) throw _error;
+                response.json(_result);
+            });
+        });
 
         res.json({
             message:'Se ha guardado un paciente'
         })
+
+
     }catch(e){
         console.log(e);
         res.json(e.message);
