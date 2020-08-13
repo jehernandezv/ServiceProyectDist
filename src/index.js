@@ -9,6 +9,7 @@ const cloudinary = require('cloudinary');
 const fs = require('fs');
 const uuid = require('uuid').v4;
 const { jsPDF } = require("jspdf"); // will automatically load the node version
+const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
 var port = process.argv[2];
@@ -61,12 +62,14 @@ db.initialize(dbName, collectionName, function (dbCollection) {
     });
 
     //reporte por cuidad en PDF
-    app.get('/generatePDF/:city', function (req, res) {
+    app.get('/generatePDF/:city', async function (req, res) {
         const doc = new jsPDF();
         const city = req.params.city;
+
         doc.setFontSize(30)
         doc.text(20, 20, '¡Estos son los pacientes de ' + city + '!', { align: "left" });
         doc.setFontSize(15);
+        
         dbCollection.find({ city: city }, { name: 1, originalname: 2 }).toArray((error, result) => {
             if (error) throw error;
             var pos = 40;
@@ -79,8 +82,9 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             doc.text(20, pos + 20, 'CASOS TOTALES: ' + result.length + '!');
             doc.save(path.join(__dirname, './public/uploads/Test.pdf'), function (err) { console.log('saved!'); });
         });
-        res.sendFile(path.join(__dirname, './public/uploads/Test.pdf'));
         
+        await snooze(150);
+        res.sendFile(path.join(__dirname, './public/uploads/Test.pdf'));
     });
 
 
