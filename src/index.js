@@ -8,6 +8,8 @@ const path = require('path');
 const cloudinary = require('cloudinary');
 const fs = require('fs');
 const uuid = require('uuid').v4;
+const { jsPDF } = require("jspdf"); // will automatically load the node version
+
 
 var port = process.argv[2];
 var numServer = process.argv[3];
@@ -16,6 +18,8 @@ var app = express();
 const db = require('./database');
 const dbName = "projectFinal";
 const collectionName = "patients";
+const doc = new jsPDF();
+
 
 const storage = multer.diskStorage({
     destination: path.join(__dirname, 'public/uploads'),
@@ -41,12 +45,12 @@ db.initialize(dbName, collectionName, function (dbCollection) {
         api_secret: 'qBb8TnYd7X9f7LdnyEbXjs5SqMs'
     });
 
+    //traer todos los casos mostrar grafica
     app.get('/', function (req, res) {
         res.json({
             message: 'el server: ' + numServer + ' respondio'
         })
     });
-    //traer todos los casos mostrar grafica
 
 
     //traer todos los casos mostrar grafica
@@ -55,20 +59,29 @@ db.initialize(dbName, collectionName, function (dbCollection) {
             message: 'traer todos los casos registrados de cache'
         })
     });
+
     //reporte por cuidad en PDF
     app.get('/generatePDF/:city', function (req, res) {
         const city = req.params.city;
-        console.log(city);
-
-        res.json({
-            message:'recibido city PDF'
-        });
-        /*
-        dbCollection.find().toArray((error, result) => {
+        doc.setFontSize(30)
+        doc.text(20, 20, '¡Estos son los pacientes de ' + city + '!', { align: "left" });
+        doc.setFontSize(15);
+        dbCollection.find({ city: city }, { name: 1, originalname: 2 }).toArray((error, result) => {
             if (error) throw error;
-            response.json(result);
-        });*/
+            var pos = 40;
+            for (let index = 0; index < result.length; index++) {
+                const element = result[index];
+
+                doc.text(20, pos, element.name, { align: "left" });
+                pos += 8;
+            }
+            doc.text(20, pos, 'Casos totales: ' + result.length + '!');
+            doc.save(path.join(__dirname, 'Test.pdf'), function (err) { console.log('saved!'); });
+        });
+    //    res.sendFile(path.join(__dirname, 'Test.pdf'));
+        
     });
+
 
     //registra casos
     app.post('/addCovid', async (req, res) => {
