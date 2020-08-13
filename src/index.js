@@ -57,10 +57,17 @@ db.initialize(dbName, collectionName, function (dbCollection) {
     });
     //reporte por cuidad en PDF
     app.get('/generatePDF/:city', function (req, res) {
+        const city = req.params.city;
+        console.log(city);
+
+        res.json({
+            message:'recibido city PDF'
+        });
+        /*
         dbCollection.find().toArray((error, result) => {
             if (error) throw error;
             response.json(result);
-        });
+        });*/
     });
 
     //registra casos
