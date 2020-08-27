@@ -41,9 +41,6 @@ db.initialize(dbName, collectionName, function (dbCollection) {
     app.use(multer({ storage }).single('image'));
     app.use(bodyParser.json());
     cloudinary.config({
-        cloud_name: 'drh8926tv',
-        api_key: '296114521285185',
-        api_secret: 'qBb8TnYd7X9f7LdnyEbXjs5SqMs'
     });
 
     //traer todos los casos mostrar grafica
